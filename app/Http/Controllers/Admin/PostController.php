@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use App\Post;
+use App\Tag;
 use Illuminate\Support\facades\Storage;
 use App\Category;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class PostController extends Controller
         'title' => 'required|max:255',
         'content' => 'required',
         'category_id' => 'nullable|exists:categories,id',
-        'image' => 'nullable| mimes:jpeg, bmp, png,jpg| max:2048'
+        'image' => 'nullable| mimes:jpeg, bmp, png,jpg| max:2048',
+        'tags' => 'exists:tags,id'
     ];
     /**
      * Display a listing of the resource.
@@ -26,7 +28,8 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        return view('admin.posts.index', compact('posts'));
+        $tags = Tag::all();
+        return view('admin.posts.index', compact('posts', 'tags'));
     }
 
     /**
@@ -37,7 +40,8 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin.posts.create', compact('categories'));
+        $tags = Tag::all();
+        return view('admin.posts.create', compact('categories', 'tags'));
     }
 
     /**
@@ -69,6 +73,11 @@ class PostController extends Controller
 
         $new_post->fill($form_data);
         $new_post->save();
+
+        if(isset($form_data['tags'])){
+            $new_post->tags()->sync($form_data['tags']);
+        }
+
         return redirect()->route('admin.posts.index');
     }
 
@@ -95,7 +104,8 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories = Category::all();
-        return view('admin.posts.edit', compact('post','categories'));
+        $tags = Tag::all();
+        return view('admin.posts.edit', compact('post','categories', 'tags'));
     }
 
     /**
@@ -124,6 +134,9 @@ class PostController extends Controller
         $form_data['slug'] = $slug;
         
         $post->update($form_data);
+
+        $post->tags()->sync(isset($form_data['tags']) ? $form_data['tags'] : []);
+
         return redirect()->route('admin.posts.index');
     }
 

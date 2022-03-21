@@ -20,7 +20,7 @@
     @enderror
   </div>
 
-  <!-- Categories -->
+  <!-- Category -->
   <div class="form-group">
     <label>Category</label>
     <select class="form-control" name="category_id" id="category_id">
@@ -35,6 +35,24 @@
     <div class="invalid-feeback">{{ $message }}</div>
     @enderror
   </div>
+
+  <!-- tags -->
+  <div class="from-group">
+    <label for="">Tags</label>
+    @foreach ($tags as $tag)
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="{{$tag->slug}}"
+      name="tags[]" value="{{$tag->id}}"
+      {{ $post->tags->contains($tag) ? "checked" : ""}}>
+      <label class="form-check-label" for="{{$tag->slug}}">
+        {{$tag->name}}
+      </label>  
+
+    </div>
+    @endforeach
+
+  </div>
+
   
   <button type="submit" class="btn btn-primary">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save" viewBox="0 0 16 16">

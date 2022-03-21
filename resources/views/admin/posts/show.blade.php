@@ -7,6 +7,10 @@
 @if($post->image)
     <img style="width:400px" src="{{ asset("storage/{$post->image}")}}" alt="{{$post->title}}">
 @endif
+
+@foreach ($post->$tags as $tag)
+    {{$tag->name}}
+@endforeach
 <br>
 
 
